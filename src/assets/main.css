@@ -1,0 +1,6 @@
+@import './base.css';
+
+:root{
+  --swiper-theme-color: #FF7A2E;
+  --primary-color: #166B3B;
+}
