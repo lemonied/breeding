@@ -2,7 +2,7 @@
 // @ts-ignore
 import { Autoplay, Navigation, Controller } from 'swiper';
 import { Swiper } from 'swiper/vue';
-import { Swiper as SwiperInstance } from 'swiper/types';
+import type { Swiper as SwiperInstance } from 'swiper/types';
 import { ref } from 'vue';
 
 export interface Props {

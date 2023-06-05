@@ -25,6 +25,7 @@ footer{
       padding: 0 20px;
       font-size: 24px;
       font-weight: normal;
+      color: #fff;
     }
     .address{
       font-size: 14px;

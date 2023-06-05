@@ -2,22 +2,50 @@
 // @ts-ignore
 import { Autoplay, Pagination, Controller } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Swiper as SwiperInstance } from 'swiper/types';
 import PagedSwiper from '@/components/swiper/PagedSwiper.vue';
+import NSwiper from '@/components/swiper/NSwiper.vue';
+import AImage from '@/components/image/AImage.vue';
+import axios from 'axios';
+import moment from 'moment';
 
 export default {
   components: {
     Swiper,
     SwiperSlide,
     PagedSwiper,
+    NSwiper,
+    AImage,
   },
   data() {
     return {
       Autoplay,
       Pagination,
       Controller,
-      monitor: null as (null | SwiperInstance),
+      moment,
+      months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+      kjyl: [] as any[],
+      zzzy: [] as any[],
+      zcyl: [] as any[],
     };
+  },
+  methods: {
+    async getkjyl() {
+      const res = await axios('/ngapi/article/listBySubjectKey1/kjyl/1/12');
+      this.kjyl = res.data.data.rows || [];
+    },
+    async getzzzy() {
+      const res = await axios('/ngapi/article/listBySubjectKey1/zzzy/1/6');
+      this.zzzy = res.data.data.rows || [];
+    },
+    async getzcyl() {
+      const res = await axios('/ngapi/article/listBySubjectKey1/zcyl/1/12');
+      this.zcyl = res.data.data.rows || [];
+    },
+  },
+  mounted() {
+    this.getkjyl();
+    this.getzzzy();
+    this.getzcyl();
   },
 };
 </script>
@@ -30,13 +58,13 @@ export default {
       :pagination="{ clickable: true }"
     >
       <SwiperSlide>
-        <img src="./slider.jpg" alt="">
+        <img src="./assets/slider.jpg" alt="">
       </SwiperSlide>
       <SwiperSlide>
-        <img src="./slider.jpg" alt="">
+        <img src="./assets/slider.jpg" alt="">
       </SwiperSlide>
       <SwiperSlide>
-        <img src="./slider.jpg" alt="">
+        <img src="./assets/slider.jpg" alt="">
       </SwiperSlide>
     </Swiper>
     <div class="section-1">
@@ -44,7 +72,7 @@ export default {
         <PagedSwiper :data="[1, 2, 3]">
           <template #default="{ data }">
             <SwiperSlide v-for="(v, k) in data" :key="k">
-              <img src="./tomato.jpg" alt="">
+              <img src="./assets/tomato.jpg" alt="">
             </SwiperSlide>
           </template>
           <template #text="{current}">{{ current }}</template>
@@ -70,7 +98,7 @@ export default {
       <div>
         <div class="overview">
           <div class="tag">平台总览</div>
-          <img src="./farm.jpg" alt="">
+          <img src="./assets/farm.jpg" alt="">
           <p>
             关于征集国家社会科学基金教育学2023年度重大、重点课题选题的通知关于征集国家社会科学基金教育学2023年度重大、重点课题选题的通知关于征集国家社会科学
             <a href="" class="more-info">【更多】</a>
@@ -79,132 +107,198 @@ export default {
       </div>
     </div>
     <div class="section-2">
-      <h2>实时监测</h2>
-      <div class="monitor">
-        <Swiper
-          :modules="[Controller]"
-          :slides-per-view="6"
-          @swiper="monitor = $event;"
-        >
-          <SwiperSlide>
-            <div class="monitor-item">
-              <div class="monitor-card">
-                <div class="icon">
-                  <img src="./icon-1.png" alt="">
-                </div>
-                <div class="text">
-                  <div>雨量</div>
-                  <div>
-                    <span>3.1</span>
-                    <span>mm</span>
+      <h2 class="sub-tit">实时监测</h2>
+      <NSwiper class="monitor">
+        <template #default="{instance}">
+          <Swiper
+            :slides-per-view="6"
+            @swiper="instance($event)"
+          >
+            <SwiperSlide>
+              <div class="monitor-item">
+                <div class="monitor-card">
+                  <div class="icon">
+                    <img src="./assets/icon-1.png" alt="">
+                  </div>
+                  <div class="text">
+                    <div>雨量</div>
+                    <div>
+                      <span>3.1</span>
+                      <span>mm</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div class="monitor-item">
-              <div class="monitor-card">
-                <div class="icon">
-                  <img src="./icon-2.png" alt="">
-                </div>
-                <div class="text">
-                  <div>雨量</div>
-                  <div>
-                    <span>3.1</span>
-                    <span>mm</span>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div class="monitor-item">
+                <div class="monitor-card">
+                  <div class="icon">
+                    <img src="./assets/icon-2.png" alt="">
+                  </div>
+                  <div class="text">
+                    <div>雨量</div>
+                    <div>
+                      <span>3.1</span>
+                      <span>mm</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div class="monitor-item">
-              <div class="monitor-card">
-                <div class="icon">
-                  <img src="./icon-3.png" alt="">
-                </div>
-                <div class="text">
-                  <div>雨量</div>
-                  <div>
-                    <span>3.1</span>
-                    <span>mm</span>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div class="monitor-item">
+                <div class="monitor-card">
+                  <div class="icon">
+                    <img src="./assets/icon-3.png" alt="">
+                  </div>
+                  <div class="text">
+                    <div>雨量</div>
+                    <div>
+                      <span>3.1</span>
+                      <span>mm</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div class="monitor-item">
-              <div class="monitor-card">
-                <div class="icon">
-                  <img src="./icon-4.png" alt="">
-                </div>
-                <div class="text">
-                  <div>雨量</div>
-                  <div>
-                    <span>3.1</span>
-                    <span>mm</span>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div class="monitor-item">
+                <div class="monitor-card">
+                  <div class="icon">
+                    <img src="./assets/icon-4.png" alt="">
+                  </div>
+                  <div class="text">
+                    <div>雨量</div>
+                    <div>
+                      <span>3.1</span>
+                      <span>mm</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div class="monitor-item">
-              <div class="monitor-card">
-                <div class="icon">
-                  <img src="./icon-5.png" alt="">
-                </div>
-                <div class="text">
-                  <div>雨量</div>
-                  <div>
-                    <span>3.1</span>
-                    <span>mm</span>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div class="monitor-item">
+                <div class="monitor-card">
+                  <div class="icon">
+                    <img src="./assets/icon-5.png" alt="">
+                  </div>
+                  <div class="text">
+                    <div>雨量</div>
+                    <div>
+                      <span>3.1</span>
+                      <span>mm</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div class="monitor-item">
-              <div class="monitor-card">
-                <div class="icon">
-                  <img src="./icon-6.png" alt="">
-                </div>
-                <div class="text">
-                  <div>雨量</div>
-                  <div>
-                    <span>3.1</span>
-                    <span>mm</span>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div class="monitor-item">
+                <div class="monitor-card">
+                  <div class="icon">
+                    <img src="./assets/icon-6.png" alt="">
+                  </div>
+                  <div class="text">
+                    <div>雨量</div>
+                    <div>
+                      <span>3.1</span>
+                      <span>mm</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div class="monitor-item">
-              <div class="monitor-card">
-                <div class="icon">
-                  <img src="./icon-1.png" alt="">
-                </div>
-                <div class="text">
-                  <div>雨量</div>
-                  <div>
-                    <span>3.1</span>
-                    <span>mm</span>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div class="monitor-item">
+                <div class="monitor-card">
+                  <div class="icon">
+                    <img src="./assets/icon-1.png" alt="">
+                  </div>
+                  <div class="text">
+                    <div>雨量</div>
+                    <div>
+                      <span>3.1</span>
+                      <span>mm</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-        </Swiper>
-        <div class="left" @click="monitor?.slidePrev()">
-          <img src="./left.png" alt="">
+            </SwiperSlide>
+          </Swiper>
+        </template>
+        <template #prev>
+          <img src="./assets/left.png" alt="">
+        </template>
+        <template #next>
+          <img src="./assets/right.png" alt="">
+        </template>
+      </NSwiper>
+    </div>
+    <div class="section-3">
+      <h2 class="sub-tit">科技引领</h2>
+      <div class="wrapper">
+        <a-row align="middle" :gutter="[15, 15]">
+          <a-col v-for="(v, k) in kjyl" :key="k" :span="8">
+            <a class="calendar-card shadow">
+              <div class="date">
+                <div class="year">{{ moment(v.publishTime).format('YY') }}</div>
+                <div class="month">{{ months[moment(v.publishTime).month()] }}</div>
+              </div>
+              <div class="content">{{ v.articleAbstract }}</div>
+            </a>
+          </a-col>
+        </a-row>
+      </div>
+    </div>
+    <div class="section-4">
+      <div class="content">
+        <h2 class="sub-tit">种质资源</h2>
+        <div class="sliders">
+          <NSwiper>
+            <template #default="{instance}">
+              <Swiper
+                :slides-per-view="3"
+                @swiper="instance($event)"
+              >
+                <SwiperSlide v-for="(v, k) in zzzy" :key="k">
+                  <div class="item">
+                    <a class="item-wrapper">
+                      <AImage :src="v.imgPath" />
+                      <div class="desc">
+                        <div>{{ v.articleAbstract }}</div>
+                      </div>
+                      <div class="time">{{ moment(v.publishTime).format('YYYY-MM-DD') }}</div>
+                    </a>
+                  </div>
+                </SwiperSlide>
+              </Swiper>
+            </template>
+            <template #prev>
+              <img src="./assets/left.png" alt="">
+            </template>
+            <template #next>
+              <img src="./assets/right.png" alt="">
+            </template>
+          </NSwiper>
         </div>
-        <div class="right" @click="monitor?.slideNext()">
-          <img src="./right.png" alt="">
-        </div>
+      </div>
+    </div>
+    <div class="section-5">
+      <h2 class="sub-tit">政策引领</h2>
+      <div class="wrapper">
+        <a-row align="middle" :gutter="[15, 15]">
+          <a-col v-for="(v, k) in zcyl" :key="k" :span="8">
+            <RouterLink :to="`/detail/${v.id}`" class="calendar-card">
+              <div class="date">
+                <div class="year">{{ moment(v.publishTime).format('YY') }}</div>
+                <div class="month">{{ months[moment(v.publishTime).month()] }}</div>
+              </div>
+              <div class="content">{{ v.articleAbstract }}</div>
+            </RouterLink>
+          </a-col>
+        </a-row>
       </div>
     </div>
   </main>
@@ -291,11 +385,11 @@ export default {
     }
   }
   .section-2{
-    background-image: url(./section-2.jpg);
+    background-image: url(./assets/section-2.jpg);
     background-repeat: no-repeat;
     background-size: 100% 100%;
     padding: 40px 0;
-    h2{
+    .sub-tit{
       font-size: 24px;
       color: #fff;
       text-align: center;
@@ -305,22 +399,6 @@ export default {
   .monitor{
     width: 90%;
     margin: 0 auto;
-    position: relative;
-    .left,.right{
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      &:hover{
-        cursor: pointer;
-        opacity: .7;
-      }
-    }
-    .left{
-      right: 100%;
-    }
-    .right{
-      left: 100%;
-    }
   }
   .monitor-item{
     padding: 0 15px;
@@ -353,6 +431,116 @@ export default {
           }
         }
       }
+    }
+  }
+  .section-3{
+    background: rgb(246,246,246);
+    padding: 40px 0;
+    .sub-tit{
+      font-size: 24px;
+      color: #000;
+      text-align: center;
+      padding: 0 0 15px 0;
+    }
+    .wrapper{
+      padding: 0 10%;
+    }
+  }
+  .calendar-card{
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    transition: all ease .3s;
+    &.shadow{
+      border-radius: 8px;
+      border: 1px solid #ebeef5;
+      background-color: #fff;
+      box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    }
+    .date{
+      background: #53A675;
+      padding: 8px 15px;
+      color: #fff;
+      border-radius: 5px;
+      .year{
+        font-size: 28px;
+        line-height: 28px;
+        font-weight: bold;
+      }
+      .month{
+        font-size: 14px;
+      }
+    }
+    .content{
+      padding: 0 0 0 10px;
+      line-height: 20px;
+      font-size: 14px;
+      height: 60px;
+      overflow: hidden;
+      color: #585858;
+    }
+  }
+  .section-4{
+    background-image: url(./assets/section-4.jpg);
+    background-size: 100% auto;
+    height: 0;
+    padding: 15% 0;
+    position: relative;
+    .content{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 30px 0;
+    }
+    .sub-tit{
+      font-size: 24px;
+      color: #fff;
+      text-align: center;
+      padding: 0 0 15px 0;
+    }
+    .sliders{
+      padding: 0 15%;
+      .item{
+        padding: 0 15px;
+        .item-wrapper{
+          display: block;
+          background: #fff;
+          border-radius: 8px;
+          overflow: hidden;
+          transition: all ease .3s;
+          &:hover{
+            opacity: .9;
+          }
+        }
+        .desc{
+          padding: 10px 10px 0 10px;
+          & > div{
+            font-size: 14px;
+            line-height: 20px;
+            height: 60px;
+            overflow: hidden;
+          }
+        }
+        .time{
+          color: #888888;
+          font-size: 12px;
+          padding: 5px 10px 10px 10px;
+        }
+      }
+    }
+  }
+  .section-5{
+    background: #fff;
+    padding: 40px 0;
+    .sub-tit{
+      font-size: 24px;
+      color: #000;
+      text-align: center;
+      padding: 0 0 15px 0;
+    }
+    .wrapper{
+      padding: 0 10%;
     }
   }
 </style>
