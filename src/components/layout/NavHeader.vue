@@ -2,7 +2,6 @@
 import { useNavStore } from '@/stores/nav';
 import { mapStores } from 'pinia';
 import axios from 'axios';
-import { RouterLink } from 'vue-router';
 
 export default {
   data() {
@@ -41,10 +40,10 @@ export default {
           <RouterLink to="/">网站首页</RouterLink>
         </li>
         <li v-for="(v, k) in navsStore.tops" :key="k">
-          <RouterLink to="">{{ v.subjectName }}</RouterLink>
+          <RouterLink :to="`/list/${v.id}`">{{ v.subjectName }}</RouterLink>
           <ul class="submenus">
             <li v-for="(item, key) in navsStore.getMenusByPid(v.id)" :key="key">
-              <RouterLink to="">{{ item.subjectName }}</RouterLink>
+              <RouterLink :to="`/list/${item.id}`">{{ item.subjectName }}</RouterLink>
             </li>
           </ul>
         </li>

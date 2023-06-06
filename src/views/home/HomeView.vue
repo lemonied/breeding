@@ -7,6 +7,8 @@ import NSwiper from '@/components/swiper/NSwiper.vue';
 import AImage from '@/components/image/AImage.vue';
 import axios from 'axios';
 import moment from 'moment';
+import { useNavStore } from '@/stores/nav';
+import { mapStores } from 'pinia';
 
 export default {
   components: {
@@ -15,6 +17,9 @@ export default {
     PagedSwiper,
     NSwiper,
     AImage,
+  },
+  computed: {
+    ...mapStores(useNavStore),
   },
   data() {
     return {
@@ -26,6 +31,7 @@ export default {
       kjyl: [] as any[],
       zzzy: [] as any[],
       zcyl: [] as any[],
+      cgzs: [] as any[],
     };
   },
   methods: {
@@ -41,11 +47,16 @@ export default {
       const res = await axios('/ngapi/article/listBySubjectKey1/zcyl/1/12');
       this.zcyl = res.data.data.rows || [];
     },
+    async getcgzs() {
+      const res = await axios('/ngapi/article/listBySubjectKey1/cgzs/1/6');
+      this.cgzs = res.data.data.rows || [];
+    },
   },
   mounted() {
     this.getkjyl();
     this.getzzzy();
     this.getzcyl();
+    this.getcgzs();
   },
 };
 </script>
@@ -72,7 +83,7 @@ export default {
         <PagedSwiper :data="[1, 2, 3]">
           <template #default="{ data }">
             <SwiperSlide v-for="(v, k) in data" :key="k">
-              <img src="./assets/tomato.jpg" alt="">
+              <AImage :aspect="0.65" src="./assets/tomato.jpg" />
             </SwiperSlide>
           </template>
           <template #text="{current}">{{ current }}</template>
@@ -81,17 +92,13 @@ export default {
       <div>
         <div class="card-tit">
           <div class="tit">成果展示</div>
-          <div class="more">查看更多></div>
+          <div class="more">
+            <RouterLink :to="`/list/${navsStore.getNavByKey('cgzs')?.id}`">查看更多></RouterLink>
+          </div>
         </div>
         <div class="card-list">
-          <div class="item">
-            <a href="">21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd</a>
-          </div>
-          <div class="item">
-            <a href="">21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd</a>
-          </div>
-          <div class="item">
-            <a href="">21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd21312sadasd</a>
+          <div class="item" v-for="(v, k) in cgzs" :key="k">
+            <RouterLink :to="`/detail/${v.id}`">{{ v.title }}</RouterLink>
           </div>
         </div>
       </div>
@@ -241,13 +248,13 @@ export default {
       <div class="wrapper">
         <a-row align="middle" :gutter="[15, 15]">
           <a-col v-for="(v, k) in kjyl" :key="k" :span="8">
-            <a class="calendar-card shadow">
+            <RouterLink :to="`/detail/${v.id}`" class="calendar-card shadow">
               <div class="date">
                 <div class="year">{{ moment(v.publishTime).format('YY') }}</div>
                 <div class="month">{{ months[moment(v.publishTime).month()] }}</div>
               </div>
               <div class="content">{{ v.articleAbstract }}</div>
-            </a>
+            </RouterLink>
           </a-col>
         </a-row>
       </div>
@@ -264,13 +271,13 @@ export default {
               >
                 <SwiperSlide v-for="(v, k) in zzzy" :key="k">
                   <div class="item">
-                    <a class="item-wrapper">
+                    <RouterLink :to="`/detail/${v.id}`" class="item-wrapper">
                       <AImage :src="v.imgPath" />
                       <div class="desc">
                         <div>{{ v.articleAbstract }}</div>
                       </div>
                       <div class="time">{{ moment(v.publishTime).format('YYYY-MM-DD') }}</div>
-                    </a>
+                    </RouterLink>
                   </div>
                 </SwiperSlide>
               </Swiper>
@@ -300,6 +307,22 @@ export default {
           </a-col>
         </a-row>
       </div>
+    </div>
+    <div class="section-6">
+      <h2 class="sub-tit">友情链接</h2>
+      <div class="friends">
+        <a-row align="middle" :gutter="[15, 15]">
+          <a-col :span="4">
+            <a href="">国家自然科学基金委员会</a>
+          </a-col>
+          <a-col :span="4">
+            <a href="">国家自然科学基金委员会</a>
+          </a-col>
+          <a-col :span="4">
+            <a href="">国家自然科学基金委员会</a>
+          </a-col>
+        </a-row>
+      </div> 
     </div>
   </main>
 </template>
@@ -335,7 +358,7 @@ export default {
   .card-list{
     .item{
       position: relative;
-      padding: 5px 10px;
+      padding: 4px 10px;
       &:before{
         position: absolute;
         right: 100%;
@@ -349,7 +372,7 @@ export default {
         background: #166B3B;
       }
       a{
-        display: inline-block;
+        display: block;
         width: 100%;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -541,6 +564,28 @@ export default {
     }
     .wrapper{
       padding: 0 10%;
+    }
+  }
+  .section-6{
+    background-image: url(./assets/section-2.jpg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 40px 0;
+    .sub-tit{
+      font-size: 24px;
+      color: #fff;
+      text-align: center;
+      padding: 0 0 15px 0;
+    }
+    .friends{
+      padding: 0 10%;
+      a{
+        display: block;
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+      }
     }
   }
 </style>

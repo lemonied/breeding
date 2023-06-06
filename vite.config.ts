@@ -31,6 +31,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
         },
+        '/__local': {
+          target: 'http://106.12.145.25/',
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
   };
