@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import SubjectNavs from '@/components/subjects/SubjectNavs.vue';
-import { onMounted, watch, reactive, computed } from 'vue';
+import { reactive, computed, watchEffect, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import PlainList from './PlainList.vue';
@@ -14,7 +14,6 @@ const navStore = useNavStore();
 const route = useRoute();
 const key = computed(() => route.query.key);
 const id = computed(() => Number(route.params.id));
-const params = reactive({ key, id });
 
 const currentNav = computed(() => navStore.getCurrent(id.value));
 const breads = computed(() => navStore.getParents(id.value));
@@ -47,11 +46,12 @@ const getListById = async () => {
   data.loading = false;
 };
 
-const getList = async () => {
+const getList = () => {
+  
   if (key.value) {
     //
   } else {
-    await getListById();
+    getListById();
   }
 };
 
@@ -61,12 +61,12 @@ const onChange = (page: number, pageSize: number) => {
   getList();
 };
 
-watch(() => params, () => {
+watch([id, key], () => {
   data.page = 1;
   data.size = 10;
   getList();
 }, {
-  deep: true,
+  flush: 'post',
 });
 
 onMounted(() => {

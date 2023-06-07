@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 // @ts-ignore
-import { Autoplay, Navigation, Controller } from 'swiper';
+import { Autoplay, Navigation } from 'swiper';
 import { Swiper } from 'swiper/vue';
 import type { Swiper as SwiperInstance } from 'swiper/types';
 import { ref } from 'vue';
@@ -20,13 +20,13 @@ const controller = ref<SwiperInstance>();
 const activeIndex = ref(0);
 
 const slideChange = (swiper: SwiperInstance) => {
-  activeIndex.value = swiper.activeIndex;
+  activeIndex.value = swiper.realIndex || 0;
 };
 
 </script>
 <template>
   <Swiper
-    :modules="[Autoplay, Navigation, Controller]"
+    :modules="[Autoplay, Navigation]"
     :autoplay="{ delay: 3000 }"
     navigation
     @swiper="controller = $event"

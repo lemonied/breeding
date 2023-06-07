@@ -32,6 +32,9 @@ export default {
       zzzy: [] as any[],
       zcyl: [] as any[],
       cgzs: [] as any[],
+      yqlj: [] as any[],
+      kjcg: [] as any[],
+      ptzl: {} as Record<string, any>,
     };
   },
   methods: {
@@ -51,12 +54,27 @@ export default {
       const res = await axios('/ngapi/article/listBySubjectKey1/cgzs/1/6');
       this.cgzs = res.data.data.rows || [];
     },
+    async getyqlj() {
+      const res = await axios('/ngapi/article/listBySubjectKey1/yqlj/1/12');
+      this.yqlj = res.data.data.rows || [];
+    },
+    async getkjcg() {
+      const res = await axios('/ngapi/article/listBySubjectKey1/kjcg/1/5');
+      this.kjcg = res.data.data.rows || [];
+    },
+    async getptzl() {
+      const res = await axios('/ngapi/article/articleByKey/ptzlwz');
+      this.ptzl = res.data.data || {};
+    },
   },
   mounted() {
     this.getkjyl();
     this.getzzzy();
     this.getzcyl();
     this.getcgzs();
+    this.getyqlj();
+    this.getkjcg();
+    this.getptzl();
   },
 };
 </script>
@@ -67,26 +85,32 @@ export default {
       :modules="[Autoplay, Pagination]"
       :autoplay="{ delay: 3000 }"
       :pagination="{ clickable: true }"
+      loop
     >
       <SwiperSlide>
-        <img src="./assets/slider.jpg" alt="">
+        <img src="./assets/001.jpg" alt="">
       </SwiperSlide>
       <SwiperSlide>
-        <img src="./assets/slider.jpg" alt="">
+        <img src="./assets/002.jpg" alt="">
       </SwiperSlide>
       <SwiperSlide>
-        <img src="./assets/slider.jpg" alt="">
+        <img src="./assets/003.jpg" alt="">
+      </SwiperSlide>
+      <SwiperSlide>
+        <img src="./assets/004.jpg" alt="">
       </SwiperSlide>
     </Swiper>
     <div class="section-1">
       <div>
-        <PagedSwiper :data="[1, 2, 3]">
+        <PagedSwiper :data="kjcg">
           <template #default="{ data }">
             <SwiperSlide v-for="(v, k) in data" :key="k">
-              <AImage :aspect="0.65" src="./assets/tomato.jpg" />
+              <RouterLink :to="`/detail/${v.id}`">
+                <AImage :aspect="0.6" :src="v.imgPath" />
+              </RouterLink>
             </SwiperSlide>
           </template>
-          <template #text="{current}">{{ current }}</template>
+          <template #text="{current}">{{ current?.title }}</template>
         </PagedSwiper>
       </div>
       <div>
@@ -98,7 +122,7 @@ export default {
         </div>
         <div class="card-list">
           <div class="item" v-for="(v, k) in cgzs" :key="k">
-            <RouterLink :to="`/detail/${v.id}`">{{ v.title }}</RouterLink>
+            <RouterLink :to="`/detail/${v.id}`" :title="v.title">{{ v.title }}</RouterLink>
           </div>
         </div>
       </div>
@@ -107,8 +131,8 @@ export default {
           <div class="tag">平台总览</div>
           <img src="./assets/farm.jpg" alt="">
           <p>
-            关于征集国家社会科学基金教育学2023年度重大、重点课题选题的通知关于征集国家社会科学基金教育学2023年度重大、重点课题选题的通知关于征集国家社会科学
-            <a href="" class="more-info">【更多】</a>
+            {{ ptzl.articleAbstract }}
+            <RouterLink to="/detail?key=ptzlwz" class="more-info">【更多】</RouterLink>
           </p>
         </div>
       </div>
@@ -144,10 +168,9 @@ export default {
                     <img src="./assets/icon-2.png" alt="">
                   </div>
                   <div class="text">
-                    <div>雨量</div>
+                    <div>风向</div>
                     <div>
-                      <span>3.1</span>
-                      <span>mm</span>
+                      <span>东北向</span>
                     </div>
                   </div>
                 </div>
@@ -160,10 +183,10 @@ export default {
                     <img src="./assets/icon-3.png" alt="">
                   </div>
                   <div class="text">
-                    <div>雨量</div>
+                    <div>空气湿度</div>
                     <div>
                       <span>3.1</span>
-                      <span>mm</span>
+                      <span>%</span>
                     </div>
                   </div>
                 </div>
@@ -176,10 +199,10 @@ export default {
                     <img src="./assets/icon-4.png" alt="">
                   </div>
                   <div class="text">
-                    <div>雨量</div>
+                    <div>风速</div>
                     <div>
-                      <span>3.1</span>
-                      <span>mm</span>
+                      <span>11</span>
+                      <span>km/h</span>
                     </div>
                   </div>
                 </div>
@@ -192,10 +215,10 @@ export default {
                     <img src="./assets/icon-5.png" alt="">
                   </div>
                   <div class="text">
-                    <div>雨量</div>
+                    <div>大气压力</div>
                     <div>
-                      <span>3.1</span>
-                      <span>mm</span>
+                      <span>101.3</span>
+                      <span>Kpa</span>
                     </div>
                   </div>
                 </div>
@@ -208,10 +231,10 @@ export default {
                     <img src="./assets/icon-6.png" alt="">
                   </div>
                   <div class="text">
-                    <div>雨量</div>
+                    <div>空气温度</div>
                     <div>
-                      <span>3.1</span>
-                      <span>mm</span>
+                      <span>4</span>
+                      <span>℃</span>
                     </div>
                   </div>
                 </div>
@@ -312,14 +335,8 @@ export default {
       <h2 class="sub-tit">友情链接</h2>
       <div class="friends">
         <a-row align="middle" :gutter="[15, 15]">
-          <a-col :span="4">
-            <a href="">国家自然科学基金委员会</a>
-          </a-col>
-          <a-col :span="4">
-            <a href="">国家自然科学基金委员会</a>
-          </a-col>
-          <a-col :span="4">
-            <a href="">国家自然科学基金委员会</a>
+          <a-col :span="4" v-for="(v, k) in yqlj" :key="k">
+            <a :href="v.resourceContext" target="_blank">{{ v.title }}</a>
           </a-col>
         </a-row>
       </div> 
@@ -329,7 +346,7 @@ export default {
 <style scoped lang="scss">
   .section-1{
     display: flex;
-    width: 80%;
+    width: 1200px;
     margin: 0 auto;
     padding: 20px 0;
     background: #fff;
@@ -580,11 +597,14 @@ export default {
     .friends{
       padding: 0 10%;
       a{
-        display: block;
+        display: flex;
         background: #fff;
         padding: 15px;
         border-radius: 8px;
+        align-items: center;
         text-align: center;
+        justify-content: center;
+        min-height: 75px;
       }
     }
   }

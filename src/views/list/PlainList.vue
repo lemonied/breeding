@@ -9,7 +9,8 @@ const props = defineProps<Props>();
 <template>
 <div class="list">
   <div class="item" v-for="(v, k) in props.data" :key="k">
-    <RouterLink :to="`/detail/${v.id}`">{{ v.title }}</RouterLink>
+    <a :href="v.resourceContext" v-if="v.resourceType === '02'" target="_blank">{{ v.title }}</a>
+    <RouterLink :to="`/detail/${v.id}`" v-else>{{ v.title }}</RouterLink>
   </div>
 </div>
 </template>

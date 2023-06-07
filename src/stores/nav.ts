@@ -5,6 +5,7 @@ export interface Nav {
   pid: number;
   subjectName: string;
   subjectNameKey: string;
+  show: boolean;
 }
 export interface NavTree extends Nav {
   children?: this[];
@@ -18,7 +19,7 @@ export const useNavStore = defineStore('navs', {
   },
   getters: {
     tops(state) {
-      return state.navs.filter(v => v.pid === 0);
+      return state.navs.filter(v => v.pid === 0 && v.show);
     },
   },
   actions: {

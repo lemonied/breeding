@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import moment from 'moment';
 import SubjectNavs from '@/components/subjects/SubjectNavs.vue';
@@ -9,6 +9,7 @@ import { message } from 'ant-design-vue';
 
 const route = useRoute();
 const id = computed(() => Number(route.params.id));
+const key = computed(() => route.query.key);
 const detail = reactive({
   loading: false,
   data: null as (Record<string, any> | null),
@@ -24,12 +25,32 @@ const getDetail = async () => {
   }
   detail.loading = false;
 };
+const getDetailByKey = async () => {
+  detail.loading = true;
+  try {
+    const res = await axios(`/ngapi/article/articleByKey/${key.value}`);
+    detail.data = res.data.data;
+  } catch (e: any) {
+    e?.message && message.error(e.message);
+  }
+  detail.loading = false;
+};
 
-watch(id, () => {
-  getDetail();
+const getInfo = () => {
+  if (key.value) {
+    getDetailByKey();
+  } else if (id.value) {
+    getDetail();
+  }
+};
+
+watch([id, key], () => {
+  getInfo();
+}, {
+  flush: 'post',
 });
-onMounted(async () => {
-  getDetail();
+onMounted(() => {
+  getInfo();
 });
 
 </script>

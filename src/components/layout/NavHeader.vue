@@ -5,7 +5,9 @@ import axios from 'axios';
 
 export default {
   data() {
-    return {};
+    return {
+      keywords: String(this.$route.query.keywords || ''),
+    };
   },
   computed: {
     ...mapStores(useNavStore),
@@ -13,7 +15,18 @@ export default {
   methods: {
     async getNavs() {
       const res = await axios.get('/ngapi/column/allList?site=hndx');
-      this.navsStore.set(res.data.data);
+      const list = (res.data.data || []).map((v: any) => {
+        return {
+          ...v,
+          show: v.isShow === '1',
+        };
+      });
+      this.navsStore.set(list);
+    },
+    onSearch() {
+      if (this.keywords) {
+        this.$router.push(`/search?keywords=${encodeURIComponent(this.keywords)}`);
+      }
     },
   },
   mounted() {
@@ -30,7 +43,7 @@ export default {
       <img src="./logo.png" alt="logo">
       <h1 class="title">育种平台数据分析展示系统</h1>
       <div class="search-box">
-        <input type="text" placeholder="请输入关键字点击搜索">
+        <input type="text" placeholder="请输入关键字点击搜索" v-model="keywords" @keydown.enter="onSearch()">
         <button>搜索</button>
       </div>
     </div>

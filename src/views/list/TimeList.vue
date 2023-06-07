@@ -14,7 +14,8 @@ const props = defineProps<Props>();
       <AImage :src="v.imgPath" />
     </div>
     <div class="con">
-      <RouterLink :to="`/detail/${v.id}`">{{ v.title }}</RouterLink>
+      <a :href="v.resourceContext" v-if="v.resourceType === '02'" target="_blank">{{ v.title }}</a>
+      <RouterLink :to="`/detail/${v.id}`" v-else>{{ v.title }}</RouterLink>
       <div class="date">{{ moment(v.publishTime).format('YYYY-MM-DD') }}</div>
     </div>
   </div>
