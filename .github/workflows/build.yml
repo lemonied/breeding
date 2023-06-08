@@ -1,7 +1,7 @@
 # actions document: https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow
 # official actions: https://github.com/actions
 
-name: 'Deployment'
+name: 'Auto Build'
 
 on:
   push:
@@ -38,8 +38,9 @@ jobs:
         run: |
           git config --global user.email chenjiyuan.super@gmail.com
           git config --global user.name action-bot
-          cp -r ./dist ./temp/
-          cd temp
+          mkdir ~/lemonied
+          cp -r ./dist ~/lemonied/dist/
+          cd ~/lemonied
           zip -r dist.zip ./dist
           git init
           git branch -m build
