@@ -1,0 +1,49 @@
+# actions document: https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow
+# official actions: https://github.com/actions
+
+name: 'Deployment'
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deployment:
+    runs-on: ubuntu-20.04
+    environment: github-pages
+    strategy:
+      matrix:
+        node-version: [16]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: master
+          fetch-depth: 1
+      # https://github.com/actions/setup-node
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Build
+        run: |
+          npm install
+          npm run build
+      - name: Push To Repository
+        run: |
+          git config --global user.email chenjiyuan.super@gmail.com
+          git config --global user.name action-bot
+          cp -r ./dist ./temp/
+          cd temp
+          zip -r dist.zip ./dist
+          git init
+          git branch -m build
+          git add .
+          git commit -m "Build by Actions"
+          git remote add origin https://${{ secrets.TOKEN }}@github.com/lemonied/breeding.git
+          git push -u -f origin HEAD:build
